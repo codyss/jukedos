@@ -13,7 +13,7 @@ juke.factory('PlayerFactory', function(){
   
 
   playa.toggle = function (song) {
-    if (playa.playing) playa(pause);
+    if (playa.playing) playa.pause();
     else playa.start(song);
   };
 

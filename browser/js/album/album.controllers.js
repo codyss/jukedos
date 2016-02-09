@@ -1,6 +1,6 @@
 'use strict';
 
-juke.controller('AlbumCtrl', function(PlayerFactory, $http, $rootScope, $log, StatsFactory, PlayerFactory) {
+juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFactory, PlayerFactory) {
   // load our initial data
   $http.get('/api/albums/')
   .then(res => $http.get('/api/albums/' + res.data[1]._id)) // temp: use first
@@ -11,25 +11,27 @@ juke.controller('AlbumCtrl', function(PlayerFactory, $http, $rootScope, $log, St
       song.audioUrl = '/api/songs/' + song._id + '.audio';
       song.albumIndex = i;
     });
-    PlayerFactory.album = album;
+    // PlayerFactory.album = album;
+    $scope.album = album;
     StatsFactory.totalTime(album).then(function(duration) {
-      PlayerFactory.fullDuration = albumDuration;
+      var min = Math.floor(duration/60);
+      var sec = Math.floor((duration/60 - min)*60);
+      $scope.fullDuration = min + ":" + sec
     });
   })
   .catch($log.error); // $log service can be turned on and off; also, pre-bound
 
-  // main toggle
   $scope.toggle = function (song) {
     if (PlayerFactory.playing && song === PlayerFactory.currentSong) {
       PlayerFactory.pause()
-    } else PlayerFactory.start(song, PlayerFactory.album.songs);
+    } else PlayerFactory.start(song, $scope.album.songs);
   };
 
   // incoming events (from Player, toggle, or skip)
   // PlayerFactory.$on('pause', pause);
 
-  $scope.next = PlayerFactory.next;
-  $scope.prev = PlayerFactory.prev;
+  $scope.playing = PlayerFactory.isPlaying;
+  $scope.currentSong = PlayerFactory.getCurrentSong;
 
   // PlayerFactory.$on('play', play);
   // PlayerFactory.$on('next', next);
