@@ -1,25 +1,25 @@
 'use strict';
 
-juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFactory, PlayerFactory) {
-  // load our initial data
-  $http.get('/api/albums/')
-  .then(res => $http.get('/api/albums/' + res.data[1]._id)) // temp: use first
-  .then(res => res.data)
-  .then(album => {
-    album.imageUrl = '/api/albums/' + album._id + '.image';
-    album.songs.forEach(function (song, i) {
-      song.audioUrl = '/api/songs/' + song._id + '.audio';
-      song.albumIndex = i;
-    });
-    // PlayerFactory.album = album;
-    $scope.album = album;
-    StatsFactory.totalTime(album).then(function(duration) {
-      var min = Math.floor(duration/60);
-      var sec = Math.floor((duration/60 - min)*60);
-      $scope.fullDuration = min + ":" + sec
-    });
+juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFactory, PlayerFactory, SideBarFactory) {
+
+  // $scope.album = SideBarFactory.giveMeAlbum()
+
+  $scope.$on('selectAlbum', function(event, album) {
+    $http.get('/api/albums/'+album._id)
+    .then(function(album){
+      // console.log(album)
+      album.data.imageUrl = '/api/albums/' + album.data._id + '.image';
+      album.data.songs.forEach(function (song, i) {
+        song.audioUrl = '/api/songs/' + song._id + '.audio';
+        song.albumIndex = i;
+      })
+      return album.data
+    }).then(function (album) {
+      console.log(album);
+      $scope.album = album;
+    })
   })
-  .catch($log.error); // $log service can be turned on and off; also, pre-bound
+  
 
   $scope.toggle = function (song) {
     if (PlayerFactory.playing && song === PlayerFactory.currentSong) {
@@ -32,6 +32,9 @@ juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFac
 
   $scope.playing = PlayerFactory.isPlaying;
   $scope.currentSong = PlayerFactory.getCurrentSong;
+  $scope.showAlbum = function () {
+    return !SideBarFactory.showingAlbums;
+  }
 
   // PlayerFactory.$on('play', play);
   // PlayerFactory.$on('next', next);
