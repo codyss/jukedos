@@ -10,7 +10,6 @@ juke.controller('PlayerCtrl', function ($scope, $rootScope, PlayerFactory) {
 
   $scope.progress = PlayerFactory.getProgress;
 
-
   $scope.next = PlayerFactory.next;
   $scope.prev = PlayerFactory.previous;
 

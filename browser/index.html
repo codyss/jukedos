@@ -12,7 +12,7 @@
    <script src="/js/player/player.factory.js" defer></script>
   </head>
   <body ng-app="juke">
-    <div id="main" class="container-fluid">
+    <div id="main" class="container-fluid ng-cloak">
 
       <div class="col-xs-2">
         <sidebar>
@@ -58,7 +58,7 @@
       </div>
 
       <footer>
-        <div ng-controller="PlayerCtrl">
+        <div ng-show="playing()" ng-controller="PlayerCtrl">
           <div class="pull-left">
             <button class="btn btn-default" ng-click="prev()">
               <span class="glyphicon glyphicon-step-backward"></span>
@@ -72,7 +72,7 @@
           </div>
           <div class="bar">
             <div class="progress">
-              <div class="progress-bar" ng-style="{width: progress + '%'}"></div>
+              <div class="progress-bar" ng-style="{width: 100 * progress() + '%'}"></div>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 'use strict';
 
-juke.factory('PlayerFactory', function(){
+juke.factory('PlayerFactory', function($rootScope){
   // non-UI logic in here
   var playa = {};
 
@@ -69,7 +69,7 @@ juke.factory('PlayerFactory', function(){
 
   playa.getProgress = function () {
     if (playa.currentSong) {
-      playa.progress = playa.audio.currentTime / playa.audio.duration;
+      playa.progress;
     } else {
       playa.progress = 0;
     }
@@ -78,10 +78,10 @@ juke.factory('PlayerFactory', function(){
 
   // initialize audio player (note this kind of DOM stuff is odd for Angular)
   playa.audio.addEventListener('ended', playa.next);
-  // playa.audio.addEventListener('timeupdate', function () {
-    // playa.progress = 100 * playa.audio.currentTime / playa.audio.duration;
-    // playa.$digest(); // no Angular-aware code is doing this for us here
-  // });
+  playa.audio.addEventListener('timeupdate', function () {
+    playa.progress = playa.audio.currentTime / playa.audio.duration;
+    $rootScope.$digest(); // no Angular-aware code is doing this for us here
+  });
 
   return playa;
 
